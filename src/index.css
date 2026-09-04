@@ -1,0 +1,344 @@
+/* ==========================================================================
+   OKN TECHNOLOGY DESIGN SYSTEM - CYBER-ETHEREAL STOREFRONT
+   Inspired by Mercado Libre UX with Next-Gen Animated Aesthetics
+   ========================================================================== */
+
+:root {
+  /* Color Palette Tokens */
+  --bg-space: #050714;
+  --bg-deep: #090e24;
+  --bg-surface: #0f1738;
+  --bg-surface-elevated: #15204c;
+  --bg-glass: rgba(15, 23, 56, 0.65);
+  --bg-glass-card: rgba(18, 28, 68, 0.55);
+  --bg-glass-input: rgba(8, 13, 34, 0.85);
+
+  /* Primary Brand Tokens */
+  --primary-indigo: #3842ff;
+  --primary-indigo-bright: #4f58ff;
+  --primary-indigo-dim: #252dbd;
+  --accent-cyan: #00f2ff;
+  --accent-cyan-hover: #38f8ff;
+  --accent-cyan-dim: rgba(0, 242, 255, 0.15);
+  --accent-cyan-glow: 0 0 20px rgba(0, 242, 255, 0.45);
+  --accent-indigo-glow: 0 0 25px rgba(56, 66, 255, 0.45);
+
+  /* Mercado Libre Functionality Accents */
+  --full-green: #00e676;
+  --full-green-bg: rgba(0, 230, 118, 0.12);
+  --deal-amber: #ff9100;
+  --deal-amber-bg: rgba(255, 145, 0, 0.15);
+  --deal-red: #ff3366;
+  --deal-red-bg: rgba(255, 51, 102, 0.15);
+
+  /* Typography Colors */
+  --text-pure: #ffffff;
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(99, 102, 241, 0.22);
+  --border-cyan: rgba(0, 242, 255, 0.35);
+  --border-cyan-active: #00f2ff;
+
+  /* Shadows */
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 20px 40px -12px rgba(0, 242, 255, 0.2);
+  --shadow-glow-cyan: 0 0 35px rgba(0, 242, 255, 0.3);
+
+  /* Typography Families */
+  --font-display: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --max-width: 1320px;
+}
+
+/* Reset & Base Setup */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-body);
+  background-color: var(--bg-space);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 15% 15%, rgba(56, 66, 255, 0.15), transparent 45%),
+    radial-gradient(circle at 85% 35%, rgba(0, 242, 255, 0.12), transparent 40%),
+    radial-gradient(circle at 50% 85%, rgba(99, 102, 241, 0.1), transparent 50%),
+    var(--bg-space);
+  background-attachment: fixed;
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2954;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-indigo);
+}
+
+/* Typography Helpers */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-pure);
+  letter-spacing: -0.02em;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Glassmorphic Container Utility */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.glass-card {
+  background: var(--bg-glass-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: var(--border-cyan);
+  box-shadow: 0 12px 32px -8px rgba(0, 242, 255, 0.22);
+  transform: translateY(-4px);
+}
+
+/* Interactive Buttons */
+.btn-cyan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent-cyan), #00c4cc);
+  color: #04091a;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 11px 22px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 18px rgba(0, 242, 255, 0.35);
+  text-decoration: none;
+}
+
+.btn-cyan:hover {
+  background: linear-gradient(135deg, #38f8ff, #00f2ff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 242, 255, 0.55);
+}
+
+.btn-cyan:active {
+  transform: translateY(0);
+}
+
+.btn-indigo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--primary-indigo), #2c36dd);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 11px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 18px rgba(56, 66, 255, 0.35);
+  text-decoration: none;
+}
+
+.btn-indigo:hover {
+  background: linear-gradient(135deg, #4f58ff, var(--primary-indigo));
+  border-color: var(--accent-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(56, 66, 255, 0.55);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 18px;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(0, 242, 255, 0.1);
+  border-color: var(--border-cyan);
+  color: var(--accent-cyan);
+}
+
+/* Badges */
+.badge-full {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--full-green-bg);
+  color: var(--full-green);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.badge-deal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--deal-red-bg);
+  color: var(--deal-red);
+  border: 1px solid rgba(255, 51, 102, 0.3);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.badge-discount {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(0, 230, 118, 0.18);
+  color: var(--full-green);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Animations */
+@keyframes pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.7);
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Layout Utilities */
+.container-store {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* Ambient Neon Glow Helpers */
+.neon-glow-cyan {
+  text-shadow: 0 0 12px rgba(0, 242, 255, 0.6);
+}
+
+.neon-glow-box {
+  animation: pulse-cyan 3s infinite ease-in-out;
+}
+
+.float-animation {
+  animation: float-gentle 4s infinite ease-in-out;
+}
