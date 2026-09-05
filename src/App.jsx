@@ -315,15 +315,7 @@ export default function App() {
 
       
       {/* Admin Modal */}
-      <AdminModal
-        isOpen={isAdminModalOpen}
-        onClose={() => setIsAdminModalOpen(false)}
-        products={products}
-        categories={categories}
-        onProductAdded={handleProductAdded}
-        onProductUpdated={handleProductUpdated}
-        onProductDeleted={handleProductDeleted}
-      />
+      
 
       {/* Floating Animated Toast Notification */}
       {toast && (
