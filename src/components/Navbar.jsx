@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react';
-import { 
+import {
+  ShieldCheck, 
   ShoppingCart, 
   Heart, 
   ChevronDown, 
