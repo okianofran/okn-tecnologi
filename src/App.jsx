@@ -1,4 +1,4 @@
-import AdminModal from './components/AdminModal';
+import AdminDashboard from './components/AdminDashboard';
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroCarousel from './components/HeroCarousel';
@@ -39,7 +39,7 @@ export default function App() {
   // Modals state
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isCheckoutSuccessOpen, setIsCheckoutSuccessOpen] = useState(false);
-  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('store'); // 'store' or 'admin'
 
   // Toast notification state
   const [toast, setToast] = useState(null);
@@ -88,14 +88,14 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#admin' || window.location.hash === '#panel') {
-        setIsAdminModalOpen(true);
+        setViewMode('admin');
       }
     };
 
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
         e.preventDefault();
-        setIsAdminModalOpen(true);
+        setViewMode('admin');
       }
     };
 
@@ -211,6 +211,22 @@ export default function App() {
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const totalAmount = discountApplied ? subtotal * 0.9 : subtotal;
 
+  
+  // Render Full Standalone Admin Dashboard Page if viewMode === 'admin'
+  if (viewMode === 'admin') {
+    return (
+      <AdminDashboard
+        onBackToStore={() => setViewMode('store')}
+        products={products}
+        categories={categories}
+        onProductAdded={handleProductAdded}
+        onProductUpdated={handleProductUpdated}
+        onProductDeleted={handleProductDeleted}
+      />
+    );
+  }
+
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Top Navbar */}
@@ -221,7 +237,7 @@ export default function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         categories={categories}
-        onOpenAdmin={() => setIsAdminModalOpen(true)}
+        onOpenAdmin={() => setViewMode('admin')}
       />
 
       {/* Main Content Area */}
@@ -262,7 +278,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer onOpenAdmin={() => setIsAdminModalOpen(true)} />
+      <Footer onOpenAdmin={() => setViewMode('admin')} />
 
       {/* Quick View Modal */}
       <QuickViewModal
