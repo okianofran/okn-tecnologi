@@ -10,13 +10,14 @@ import {
   Tag
 } from 'lucide-react';
 
-export default function Navbar({ 
-  cartCount, 
+export default function Navbar({
+cartCount, 
   favoritesCount, 
   onOpenCart, 
   selectedCategory,
   onSelectCategory,
-  categories
+  categories,
+  onOpenAdmin = () => {}
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
