@@ -1,3 +1,4 @@
+import AdminModal from './components/AdminModal';
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroCarousel from './components/HeroCarousel';
@@ -38,6 +39,7 @@ export default function App() {
   // Modals state
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isCheckoutSuccessOpen, setIsCheckoutSuccessOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
   // Toast notification state
   const [toast, setToast] = useState(null);
@@ -156,6 +158,23 @@ export default function App() {
   };
 
   // Scroll to deals
+  
+  // Admin CRUD Handlers
+  const handleProductAdded = (newProduct) => {
+    setProducts(prev => [newProduct, ...prev]);
+    showToast(`¡Producto "${newProduct.title}" publicado en la tienda!`);
+  };
+
+  const handleProductUpdated = (updatedProduct) => {
+    setProducts(prev => prev.map(p => p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p));
+    showToast(`¡Producto "${updatedProduct.title}" actualizado!`);
+  };
+
+  const handleProductDeleted = (deletedId) => {
+    setProducts(prev => prev.filter(p => p.id !== deletedId));
+    showToast('Producto eliminado del catálogo');
+  };
+
   const scrollToDeals = () => {
     const el = document.getElementById('ofertas');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -176,6 +195,7 @@ export default function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         categories={categories}
+        onOpenAdmin={() => setIsAdminModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -249,6 +269,18 @@ export default function App() {
           setCart([]);
         }}
         totalAmount={totalAmount}
+      />
+
+      
+      {/* Admin Modal */}
+      <AdminModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+        products={products}
+        categories={categories}
+        onProductAdded={handleProductAdded}
+        onProductUpdated={handleProductUpdated}
+        onProductDeleted={handleProductDeleted}
       />
 
       {/* Floating Animated Toast Notification */}
