@@ -84,6 +84,32 @@ export default function App() {
     loadLiveData();
   }, []);
 
+  // Secret URL (#admin) & Keyboard Shortcut (Ctrl+Shift+A) to open Admin Panel
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#admin' || window.location.hash === '#panel') {
+        setIsAdminModalOpen(true);
+      }
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setIsAdminModalOpen(true);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+
   // Add to cart handler
   const handleAddToCart = (product, quantity = 1) => {
     setCart((prev) => {
@@ -236,7 +262,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer onOpenAdmin={() => setIsAdminModalOpen(true)} />
 
       {/* Quick View Modal */}
       <QuickViewModal

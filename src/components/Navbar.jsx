@@ -219,38 +219,7 @@ cartCount,
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
             
             
-            {/* Modo Admin */}
-            <button 
-              onClick={onOpenAdmin}
-              title="Panel de Administración"
-              style={{
-                position: 'relative',
-                background: 'rgba(0, 242, 255, 0.1)',
-                border: '1px solid rgba(0, 242, 255, 0.3)',
-                color: '#00f2ff',
-                padding: '9px 14px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                transition: 'all 0.2s ease',
-                boxShadow: '0 0 10px rgba(0, 242, 255, 0.15)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#00f2ff';
-                e.currentTarget.style.boxShadow = '0 0 18px rgba(0, 242, 255, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 242, 255, 0.3)';
-                e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 242, 255, 0.15)';
-              }}
-            >
-              <ShieldCheck size={18} />
-              <span className="hidden-mobile">Admin</span>
-            </button>
+            
 
             {/* Wishlist / Favoritos */}
             <button 

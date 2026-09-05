@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldCheck, Truck, CreditCard, Lock, Mail, Phone, MapPin } from 'lucide-react';
 
-export default function Footer() {
+export default function Footer({ onOpenAdmin = () => {} }) {
   return (
     <footer style={{
       background: '#040612',
@@ -141,6 +141,24 @@ export default function Footer() {
         </div>
 
       </div>
+    
+        <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.75rem', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+          <span>© OKN Technology Store. Todos los derechos reservados.</span>
+          <button 
+            onClick={onOpenAdmin}
+            style={{ 
+              background: 'transparent', 
+              border: 'none', 
+              color: '#334155', 
+              fontSize: '0.75rem', 
+              cursor: 'pointer',
+              textDecoration: 'underline'
+            }}
+          >
+            Acceso Interno Admin
+          </button>
+        </div>
+
     </footer>
   );
 }
