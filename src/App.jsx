@@ -92,10 +92,14 @@ export default function App() {
     loadLiveData();
   }, []);
 
-  // Secret URL (#admin) & Keyboard Shortcut (Ctrl+Shift+A) to open Admin Panel
+  // Secret URL (#admin or /admin) & Keyboard Shortcut (Ctrl+Shift+A) to open Admin Panel
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#admin' || window.location.hash === '#panel') {
+    const checkRoute = () => {
+      if (
+        window.location.hash === '#admin' || 
+        window.location.hash === '#panel' || 
+        window.location.pathname.includes('/admin')
+      ) {
         setViewMode('admin');
       }
     };
@@ -107,15 +111,23 @@ export default function App() {
       }
     };
 
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
+    checkRoute();
+    window.addEventListener('hashchange', checkRoute);
+    window.addEventListener('popstate', checkRoute);
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('hashchange', checkRoute);
+      window.removeEventListener('popstate', checkRoute);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  const handleBackToStore = () => {
+    setViewMode('store');
+    // Limpiar la URL para que quede solo la raíz / (sin #admin ni /admin)
+    window.history.pushState({}, '', '/');
+  };
 
 
   // Add to cart handler
@@ -184,7 +196,7 @@ export default function App() {
     });
     message += `\n*Total Pagado:* ${totalAmount}\n\nQuedo a la espera de confirmación.`;
 
-    const phoneNumber = "593999999999"; // TODO: Reemplazar con el real
+    const phoneNumber = "584146619159"; // Número oficial de la tienda
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
     // Abrir WhatsApp en una nueva pestaña
@@ -249,7 +261,7 @@ export default function App() {
   if (viewMode === 'admin') {
     return (
       <AdminDashboard
-        onBackToStore={() => setViewMode('store')}
+        onBackToStore={handleBackToStore}
         products={products}
         categories={categories}
         onProductAdded={handleProductAdded}
