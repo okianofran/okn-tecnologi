@@ -16,6 +16,14 @@ export default async function handler(req, res) {
 
   try {
     const client = await clientPromise;
+    if (!client) {
+      return res.status(500).json({
+        success: false,
+        message: 'MONGODB_URI no está configurada en las Variables de Entorno de Vercel.',
+        error: 'Por favor agrega MONGODB_URI en Vercel (Settings -> Environment Variables) y haz Redeploy.'
+      });
+    }
+
     const db = client.db('okn_technology');
     const collection = db.collection('products');
 
@@ -119,9 +127,13 @@ export default async function handler(req, res) {
     }
 
     res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
-    return res.status(405).end(`Método ${req.method} no permitido`);
+    return res.status(405).end('Método no permitido');
   } catch (error) {
     console.error('Error en /api/products:', error);
-    return res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: 'Error de conexión con MongoDB Atlas',
+      error: error.message || 'Verifica MONGODB_URI en Vercel y Network Access 0.0.0.0/0 en MongoDB Atlas.'
+    });
   }
 }
