@@ -9,6 +9,7 @@ import ProductGrid from './components/ProductGrid';
 import QuickViewModal from './components/QuickViewModal';
 import CartDrawer from './components/CartDrawer';
 import CheckoutSuccessModal from './components/CheckoutSuccessModal';
+import CheckoutFormModal from './components/CheckoutFormModal';
 import Footer from './components/Footer';
 import { PRODUCTS, CATEGORIES } from './data/products';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
@@ -39,6 +40,7 @@ export default function App() {
   // Modals state
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [isCheckoutSuccessOpen, setIsCheckoutSuccessOpen] = useState(false);
+  const [isCheckoutFormOpen, setIsCheckoutFormOpen] = useState(false);
   const [viewMode, setViewMode] = useState('store'); // 'store' or 'admin'
 
   // Toast notification state
@@ -156,16 +158,38 @@ export default function App() {
     });
   };
 
-  // Trigger checkout & save order in MongoDB
-  const handleCheckout = async () => {
+    // Opens the Checkout Form
+  const handleCheckout = () => {
     setIsCartOpen(false);
-    setIsCheckoutSuccessOpen(true);
+    setIsCheckoutFormOpen(true);
+  };
+
+  // Trigger checkout & save order in MongoDB, then redirect to WhatsApp
+  const handleConfirmPurchase = async (customerData) => {
+    setIsCheckoutFormOpen(false);
+    
+    // Format WhatsApp Message
+    let message = `Hola, he registrado mi compra y pago:\n\n`;
+    message += `*Nombre:* ${customerData.nombre}\n`;
+    message += `*Ref. Pago:* ${customerData.referencia}\n\n`;
+    message += `*Productos:*\n`;
+    cart.forEach(item => {
+      message += `- ${item.quantity}x ${item.title} (${item.price})\n`;
+    });
+    message += `\n*Total Pagado:* ${totalAmount}\n\nQuedo a la espera de confirmación.`;
+
+    const phoneNumber = "593999999999"; // TODO: Reemplazar con el real
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Abrir WhatsApp en una nueva pestaña
+    window.open(whatsappUrl, '_blank');
 
     try {
       await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          customer: customerData,
           items: cart.map(item => ({ id: item.id, title: item.title, price: item.price, quantity: item.quantity })),
           subtotal,
           totalAmount,
@@ -176,6 +200,9 @@ export default function App() {
     } catch (e) {
       console.warn('Orden procesada localmente:', e);
     }
+    
+    // Vaciar carrito tras la compra
+    setCart([]);
   };
 
   // Reset filters
@@ -301,6 +328,15 @@ export default function App() {
         setDiscountCode={setDiscountCode}
         discountApplied={discountApplied}
         setDiscountApplied={setDiscountApplied}
+      />
+
+      {/* Checkout Form Modal */}
+      <CheckoutFormModal
+        isOpen={isCheckoutFormOpen}
+        onClose={() => setIsCheckoutFormOpen(false)}
+        totalAmount={totalAmount}
+        cart={cart}
+        onConfirmPurchase={handleConfirmPurchase}
       />
 
       {/* Checkout Celebration Success Modal */}

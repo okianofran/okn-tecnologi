@@ -48,7 +48,8 @@ export default function AdminDashboard({
     badge: 'NUEVO',
     installments: '12x sin interés',
     freeShipping: true,
-    fullShipping: true
+    fullShipping: true,
+    warranty: '6 meses por defectos de fábrica'
   });
 
   const [imageInputMode, setImageInputMode] = useState('file'); // 'file' or 'url'
@@ -56,6 +57,48 @@ export default function AdminDashboard({
   const [filterCategory, setFilterCategory] = useState('all');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
+  
+  // Orders State
+  const [orders, setOrders] = useState([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  
+  const fetchOrders = async () => {
+    setIsLoadingOrders(true);
+    try {
+      const res = await fetch('/api/orders');
+      if (res.ok) {
+        const data = await res.json();
+        setOrders(data.data || []);
+      }
+    } catch (e) {
+      console.warn("Error fetching orders:", e);
+    }
+    setIsLoadingOrders(false);
+  };
+
+  const handleAuthorizePayment = async (orderId) => {
+    if (!window.confirm("¿Confirmar que has recibido el pago de esta orden y enviar la factura por correo?")) return;
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: orderId, status: 'CONFIRMED' })
+      });
+      if (res.ok) {
+        setStatusMessage({ type: 'success', text: '¡Pago confirmado y factura en proceso de envío!' });
+        fetchOrders();
+        // Also call the send-invoice API endpoint
+        fetch('/api/send-invoice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId })
+        }).catch(console.error);
+      }
+    } catch (e) {
+      console.error(e);
+      setStatusMessage({ type: 'error', text: 'Error al confirmar pago' });
+    }
+  };
 
   // Handle PIN Login
   const handleLogin = (e) => {
@@ -99,7 +142,8 @@ export default function AdminDashboard({
       badge: 'NUEVO',
       installments: '12x sin interés',
       freeShipping: true,
-      fullShipping: true
+      fullShipping: true,
+      warranty: '6 meses por defectos de fábrica'
     });
   };
 
@@ -117,7 +161,8 @@ export default function AdminDashboard({
       badge: product.badge || 'NUEVO',
       installments: product.installments || '12x sin interés',
       freeShipping: product.freeShipping !== undefined ? product.freeShipping : true,
-      fullShipping: product.fullShipping !== undefined ? product.fullShipping : true
+      fullShipping: product.fullShipping !== undefined ? product.fullShipping : true,
+      warranty: product.warranty || '6 meses por defectos de fábrica'
     });
     setActiveTab('add');
   };
@@ -1038,18 +1083,32 @@ export default function AdminDashboard({
 
               </div>
 
-              {/* Description */}
-              <div>
-                <label style={{ fontSize: '0.85rem', color: '#cbd5e1', display: 'block', marginBottom: '8px', fontWeight: 600 }}>
-                  Descripción de Características Técnicas
-                </label>
-                <textarea 
-                  rows="4"
-                  placeholder="Detalla procesador, memoria RAM, batería, garantía u otras especificaciones clave..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  style={{ ...inputStyle, resize: 'vertical' }}
-                />
+              {/* Description & Warranty */}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '0.85rem', color: '#cbd5e1', display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+                    Descripción de Características Técnicas
+                  </label>
+                  <textarea 
+                    rows="4"
+                    placeholder="Detalla procesador, memoria RAM, batería u otras especificaciones clave..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    style={{ ...inputStyle, resize: 'vertical' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.85rem', color: '#cbd5e1', display: 'block', marginBottom: '8px', fontWeight: 600 }}>
+                    Garantía del Producto
+                  </label>
+                  <textarea 
+                    rows="4"
+                    placeholder="Ej: 6 meses por defectos de fábrica. No cubre daños por agua o caídas."
+                    value={formData.warranty}
+                    onChange={(e) => setFormData({ ...formData, warranty: e.target.value })}
+                    style={{ ...inputStyle, resize: 'vertical' }}
+                  />
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -1086,6 +1145,81 @@ export default function AdminDashboard({
 
             </form>
 
+          </div>
+        )}
+
+        {/* TAB 3: ORDERS */}
+        {activeTab === 'orders' && (
+          <div style={{
+            background: 'linear-gradient(145deg, #0e1329, #080b1a)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '20px',
+            padding: '24px',
+            boxShadow: '0 15px 40px rgba(0,0,0,0.5)'
+          }}>
+            <h2 style={{ color: '#00f2ff', marginTop: 0, marginBottom: '20px' }}>Gestión de Pedidos y Confirmación de Pagos</h2>
+            {isLoadingOrders ? (
+              <p style={{ color: '#94a3b8' }}>Cargando pedidos de MongoDB...</p>
+            ) : orders.length === 0 ? (
+              <p style={{ color: '#94a3b8' }}>No hay pedidos registrados en la base de datos.</p>
+            ) : (
+              <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(255, 255, 255, 0.04)', color: '#94a3b8', textAlign: 'left' }}>
+                      <th style={{ padding: '14px 16px' }}>Fecha / ID</th>
+                      <th style={{ padding: '14px 16px' }}>Cliente</th>
+                      <th style={{ padding: '14px 16px' }}>Monto</th>
+                      <th style={{ padding: '14px 16px' }}>Ref. Pago</th>
+                      <th style={{ padding: '14px 16px' }}>Estado</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'right' }}>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map(o => (
+                      <tr key={o._id || o.orderId} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <td style={{ padding: '12px 16px' }}>
+                          <div style={{ color: '#fff', fontWeight: 'bold' }}>{o.orderId}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{new Date(o.createdAt).toLocaleDateString()}</div>
+                        </td>
+                        <td style={{ padding: '12px 16px' }}>
+                          <div style={{ color: '#fff' }}>{o.customer?.nombre || 'Desconocido'}</div>
+                          <div style={{ fontSize: '0.8rem', color: '#00f2ff' }}>{o.customer?.telefono || ''}</div>
+                        </td>
+                        <td style={{ padding: '12px 16px', color: '#00e676', fontWeight: 'bold' }}>
+                          ${o.totalAmount}
+                        </td>
+                        <td style={{ padding: '12px 16px', fontFamily: 'monospace', color: '#ff9100' }}>
+                          {o.customer?.referencia || 'N/A'}
+                        </td>
+                        <td style={{ padding: '12px 16px' }}>
+                          <span style={{
+                            padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold',
+                            background: o.status === 'CONFIRMED' ? 'rgba(0, 230, 118, 0.2)' : 'rgba(255, 145, 0, 0.2)',
+                            color: o.status === 'CONFIRMED' ? '#00e676' : '#ff9100'
+                          }}>
+                            {o.status === 'CONFIRMED' ? 'PAGO CONFIRMADO' : 'PENDIENTE'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                          {o.status === 'PENDING' && (
+                            <button 
+                              onClick={() => handleAuthorizePayment(o._id)}
+                              style={{
+                                background: 'linear-gradient(135deg, #00e676, #00b35c)', color: '#000', border: 'none', padding: '8px 14px',
+                                borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 0 10px rgba(0, 230, 118, 0.4)'
+                              }}
+                            >
+                              Autorizar Pago
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
