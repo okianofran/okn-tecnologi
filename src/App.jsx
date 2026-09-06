@@ -15,9 +15,15 @@ import { PRODUCTS, CATEGORIES } from './data/products';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  // Products & Categories loaded live from MongoDB Atlas (with initial fallback)
-  const [products, setProducts] = useState(PRODUCTS);
-  const [categories, setCategories] = useState(CATEGORIES);
+  // Products & Categories loaded live from MongoDB Atlas (with initial fallback to LocalStorage/Data)
+  const [products, setProducts] = useState(() => {
+    const saved = localStorage.getItem('okn_products');
+    return saved ? JSON.parse(saved) : PRODUCTS;
+  });
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem('okn_categories');
+    return saved ? JSON.parse(saved) : CATEGORIES;
+  });
   const [isLoadingLive, setIsLoadingLive] = useState(false);
 
   // Cart state
@@ -77,7 +83,7 @@ export default function App() {
           }
         }
       } catch (err) {
-        console.info('Usando catálogo inicial:', err);
+        console.info('MongoDB no configurado. Usando LocalStorage o catálogo por defecto.', err);
       } finally {
         setIsLoadingLive(false);
       }
