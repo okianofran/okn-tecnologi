@@ -95,18 +95,19 @@ export default function App() {
   // Secret URL (#admin or /admin) & Keyboard Shortcut (Ctrl+Shift+A) to open Admin Panel
   useEffect(() => {
     const checkRoute = () => {
-      if (
-        window.location.hash === '#admin' || 
-        window.location.hash === '#panel' || 
-        window.location.pathname.includes('/admin')
-      ) {
+      const hash = window.location.hash.toLowerCase();
+      const path = window.location.pathname.toLowerCase();
+      if (hash === '#admin' || hash === '#panel' || path === '/admin' || path === '/panel' || path.startsWith('/admin')) {
         setViewMode('admin');
+      } else if (viewMode === 'admin' && hash !== '#admin' && !path.includes('/admin')) {
+        setViewMode('store');
       }
     };
 
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
         e.preventDefault();
+        window.location.hash = 'admin';
         setViewMode('admin');
       }
     };
@@ -282,7 +283,7 @@ export default function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         categories={categories}
-        onOpenAdmin={() => setViewMode('admin')}
+        onOpenAdmin={() => { setViewMode('admin'); window.location.hash = 'admin'; }}
       />
 
       {/* Main Content Area */}

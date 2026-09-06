@@ -216,7 +216,37 @@ cartCount,
           </nav>
 
           {/* Right Actions: Wishlist, Cart & Mobile Toggle */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+            {/* Admin Dashboard Button */}
+            <button 
+              onClick={onOpenAdmin}
+              title="Panel de Administración"
+              style={{
+                background: 'rgba(0, 242, 255, 0.08)',
+                border: '1px solid rgba(0, 242, 255, 0.35)',
+                color: '#00f2ff',
+                padding: '8px 14px',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 242, 255, 0.22)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 242, 255, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 242, 255, 0.08)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <ShieldCheck size={18} />
+              <span className="hidden-mobile">Panel Admin</span>
+            </button>
             
             
             
